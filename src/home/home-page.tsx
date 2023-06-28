@@ -2,24 +2,30 @@ import React, { useState } from "react";
 import { FlatList, View, StyleSheet, Text, TextInput, Button, TouchableHighlight } from "react-native";
 import { Image } from "expo-image";
 import { Ionicons } from '@expo/vector-icons';
-import EntityUser from "../entity/entity-User";
+import UserEntity from "../entity/entity-User";
 
-export default function HomePage() {
+export default function HomePage({ navigation }) {
+
     const [searchText, setSearchText] = useState('');
+
     const [searchResults, setUsers] = useState([]);
+
 
     const handleSearch = () => {
         const requestOptions = {
             method: 'GET',
-
+            headers: myHeaders
 
         };
-        var ListUser: EntityUser[] = []
+        var myHeaders = new Headers();
+        myHeaders.append("Authorization", "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");
+
+
 
         fetch(`https://api.github.com/users/${searchText}`, requestOptions)
             .then(response => response.json())
             .then(result => {
-
+                    console.log(result)
                 setUsers([{
                     id: result.id,
                     name: result.name,
@@ -54,21 +60,25 @@ export default function HomePage() {
                     style={styles.botao}
                     onPress={handleSearch}
                 >
-                    <Ionicons name="ios-search-sharp" size={20} color="black" />
+                    <Ionicons name="ios-search-sharp" size={30} color="black" />
                 </TouchableHighlight>
             </View>
 
             <FlatList
                 renderItem={({ item }) => (
-                    <View style={styles.card}>
+                 <TouchableHighlight
+                    onPress={() => navigation.navigate('Details',item)}
+                    >
+                           <View style={styles.card}>
                         <Image style={styles.img} source={{ uri: item.avatar}} />
                         <View style={styles.positionText}>
                             <Text style={styles.testoCard}>{item.name}</Text>
                         </View>
                     </View>
+                    </TouchableHighlight>
                 )}
                 data={searchResults}
-                keyExtractor={(item) => item.id}
+                keyExtractor={(item) => item.id.toString()}
             />
         </View>
     );
@@ -78,7 +88,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         justifyContent: 'flex-start',
-        backgroundColor: '#544855',
+        backgroundColor: 'rgb(13,17,23)',
         paddingTop: 20,
     },
     card: {
@@ -132,7 +142,7 @@ const styles = StyleSheet.create({
         marginHorizontal: 60,
         height: 30,
         width: 30,
-        backgroundColor: '#F6359D',
+      
         borderRadius: 40,
         alignItems: 'center',
     }

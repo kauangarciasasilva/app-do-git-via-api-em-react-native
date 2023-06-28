@@ -1,4 +1,4 @@
-export default class EntityUser{
+export default class UserEntity{
  id:number;
  name:string;
  avatar:string;   
